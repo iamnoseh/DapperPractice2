@@ -1,4 +1,5 @@
 namespace Services;
+using DapperContext;
 using Model;
 using Interufaces;
 using Npgsql;
@@ -7,12 +8,15 @@ using System.Collections.Generic;
 
 public class GroupService : IGroupService
 {
+    private readonly  DapperContext context;
+    public GroupService()
+    {
+        context = new DapperContext();
+    }
     public void AddGroup(Group group)
     {
            try
         {
-        string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-        using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
         string cmd = "Insert into Groups(Name, Description,MentorId,StudentId) values( @Name, @Description, @MentorId,@StudentId);";
         connection.Execute(cmd,group);
         System.Console.WriteLine("Groupi nav Dokhil karda shud!");
@@ -33,8 +37,6 @@ public class GroupService : IGroupService
     {
         try
         {
-        string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-        using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
         string cmd = "Delete from Groups where id = @id";
         connection.Execute(cmd,new {id = id});
         System.Console.WriteLine($"Group bo ID - i {id} az ruykhat nest karda shud!");
@@ -55,8 +57,6 @@ public class GroupService : IGroupService
     {
                  try
         {
-        string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-        using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
         string cmd = "Select * from Groups ;";
         List<Group> groups  = connection.Query<Group>(cmd).ToList();
         return groups;
@@ -77,8 +77,7 @@ public class GroupService : IGroupService
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+
             string cmd = "Select * from Groups where id = @id;";
             Group group = connection.Query(cmd).FirstOrDefault();
             return group;
@@ -99,8 +98,7 @@ public class GroupService : IGroupService
     {
         try
         {
-        string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-        using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
+
         string cmd = "Update Groups set Name = @Name, Description = @Description,MentorId = @MentorId,StudentId = @StudentId where id = @id";
         int effect = connection.Execute(cmd,group);
         if (effect != 0)

@@ -2,17 +2,21 @@ using Interufaces;
 using Model;
 using Npgsql;
 using Dapper;
+using DapperContext;
 namespace Services;
 
 
 public class StudentService : IStudentService
 {
+        private readonly DapperContext context;
+    public StudentService()
+    {
+        context = new DapperContext();
+    }
     public void AddStudent(Student student)
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             string cmd = "INSERT INTO Students (First_Name, Last_Name, Age, Email, PhoneNumber, Address) VALUES ( @FirstName, @LastName, @Age, @Email, @PhoneNumber, @Address);";
             int effect = connection.Execute(cmd,student);
             if (effect != 0)
@@ -40,9 +44,7 @@ public class StudentService : IStudentService
     {
          try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            string cmd ="Delete from Students where StudentId=@Id";
+             string cmd ="Delete from Students where StudentId=@Id";
             int effect = connection.Execute(cmd,new {id});
             if (effect != 0) 
             {
@@ -69,8 +71,6 @@ public class StudentService : IStudentService
     {
          try
         {
-             string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             string cmd = "SELECT * FROM Students;";
             List<Student> student = connection.Query<Student>(cmd).ToList();
             return student;
@@ -86,8 +86,6 @@ public class StudentService : IStudentService
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             string cmd = "SELECT * FROM Students where StudentId = @StudentId";
             Student student = connection.Query<Student>(cmd).FirstOrDefault();
             return student;
@@ -103,9 +101,7 @@ public class StudentService : IStudentService
     {
          try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-                string cmd = @"
+             string cmd = @"
                 UPDATE Students
                 SET FirstName = @First_Name,
                     LastName = @Last_Name,

@@ -2,18 +2,22 @@ using Interufaces;
 using Model;
 using Npgsql;
 using Dapper;
+using DapperContext;
 namespace Services;
 
 
 public class MentorService : IMentorService
 {
+    private readonly  DapperContext context;
+    public MentorService()
+    {
+        context = new DapperContext();
+    }
     public void AddMentor(Mentor mentor)
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            string cmd = "INSERT INTO Mentor (FirstName, LastName,Age,Email,Phonenumber,Address) values(@First_Name,@Last_Name,Age = @Age,@Email, = @Phonenumber,@Address)" ;
+           string cmd = "INSERT INTO Mentor (FirstName, LastName,Age,Email,Phonenumber,Address) values(@First_Name,@Last_Name,Age = @Age,@Email, = @Phonenumber,@Address)" ;
             int effect = connection.Execute(cmd,mentor);
             if (effect != 0)
             {
@@ -40,9 +44,7 @@ public class MentorService : IMentorService
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            string cmd ="Delete from Mentor where MentorId=@Id";
+             string cmd ="Delete from Mentor where MentorId=@Id";
             int effect = connection.Execute(cmd,new {id});
             if (effect != 0) 
             {
@@ -69,9 +71,7 @@ public class MentorService : IMentorService
     {
         try
         {
-             string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            string cmd = "SELECT * FROM Mentors";
+             string cmd = "SELECT * FROM Mentors";
             List<Mentor> mentors = connection.Query<Mentor>(cmd).ToList();
             return mentors;
         }
@@ -86,8 +86,6 @@ public class MentorService : IMentorService
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
             string cmd = "SELECT * FROM Mentors where MentorId = @id";
             Mentor mentor = connection.Query<Mentor>(cmd).FirstOrDefault();;
             return mentor;
@@ -103,9 +101,7 @@ public class MentorService : IMentorService
     {
         try
         {
-            string connectionString = "Server = localhost; Port = 5432; Database = coursedb; User Id=postgres; Password=12345;"; 
-            using NpgsqlConnection connection = new NpgsqlConnection(connectionString);
-            string cmd = "Update Mentor set FirstName = @First_Name,LastName = @Last_Name,Age = @Age,Email = @Email,Phonenumber = @Phonenumber,Address = @Address where MentorId = @Id" ;
+             string cmd = "Update Mentor set FirstName = @First_Name,LastName = @Last_Name,Age = @Age,Email = @Email,Phonenumber = @Phonenumber,Address = @Address where MentorId = @Id" ;
             int effect = connection.Execute(cmd,mentor);
             if (effect != 0)
             {
