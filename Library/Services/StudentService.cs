@@ -2,7 +2,7 @@ using Interufaces;
 using Model;
 using Npgsql;
 using Dapper;
-using DapperContext;
+using DapperContexts;
 namespace Services;
 
 
@@ -18,7 +18,7 @@ public class StudentService : IStudentService
         try
         {
             string cmd = "INSERT INTO Students (First_Name, Last_Name, Age, Email, PhoneNumber, Address) VALUES ( @FirstName, @LastName, @Age, @Email, @PhoneNumber, @Address);";
-            int effect = connection.Execute(cmd,student);
+            int effect = context.GetConnection().Execute(cmd,student);
             if (effect != 0)
             {
                 System.Console.WriteLine("Student inserted successfully");
@@ -45,7 +45,7 @@ public class StudentService : IStudentService
          try
         {
              string cmd ="Delete from Students where StudentId=@Id";
-            int effect = connection.Execute(cmd,new {id});
+            int effect = context.GetConnection().Execute(cmd,new {id});
             if (effect != 0) 
             {
                 System.Console.WriteLine("Student deleted!");
@@ -72,7 +72,7 @@ public class StudentService : IStudentService
          try
         {
             string cmd = "SELECT * FROM Students;";
-            List<Student> student = connection.Query<Student>(cmd).ToList();
+            List<Student> student = context.GetConnection().Query<Student>(cmd).ToList();
             return student;
         }
         catch (Exception e)
@@ -87,7 +87,7 @@ public class StudentService : IStudentService
         try
         {
             string cmd = "SELECT * FROM Students where StudentId = @StudentId";
-            Student student = connection.Query<Student>(cmd).FirstOrDefault();
+            Student student = context.GetConnection().Query<Student>(cmd).FirstOrDefault();
             return student;
         }
         catch (Exception e)
@@ -110,7 +110,7 @@ public class StudentService : IStudentService
                     PhoneNumber = @PhoneNumber,
                     Address = @Address
                 WHERE StudentId = @StudentId;";
-            int effect = connection.Execute(cmd, new
+            int effect = context.GetConnection().Execute(cmd, new
             {
                 student.FirstName,
                 student.LastName,
